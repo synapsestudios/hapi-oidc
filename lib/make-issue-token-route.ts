@@ -24,8 +24,7 @@ const token = (clients: ClientSecrets, tokenEndpoint: string) => async (
       Authorization: "Basic " + btoa(`${client_id}:${clients[client_id]}`),
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    //@ts-ignore weird types for querystring
-    payload: querystring.stringify(tokenPayload),
+    payload: querystring.stringify(tokenPayload as querystring.ParsedUrlQueryInput),
   };
 
   return await Wreck.post(tokenEndpoint, options);
