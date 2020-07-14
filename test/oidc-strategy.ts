@@ -3,7 +3,6 @@ import { expect } from "@hapi/code";
 import { stub } from "sinon";
 import { Server } from "@hapi/hapi";
 
-// @ts-ignore dumb config stuff makes me ts-ignore json files
 import keystores from "./util/keystores.json";
 import { createInitializedServer } from "./util/server";
 import getTokenWithoutKs from "./util/getToken";
