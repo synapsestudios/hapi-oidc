@@ -9,10 +9,24 @@ export type ClientSecrets = {
   [key: string]: string;
 };
 
+type Key = {
+  kty: string;
+  kid: string;
+  use: string;
+  crv: string;
+  [key: string]: string;
+};
+
+/**
+ * A keystore is built using the node-jose library, most of the
+ * time we will use our oidc service to generate this file.
+ */
+type Keystore = { keys: Key[] };
+
 type HapiOidcOptions = {
   tokenEndpoint?: string;
   clients?: ClientSecrets;
-  fetchKeystore?: () => object | Promise<object>;
+  fetchKeystore?: () => Keystore | Promise<Keystore>;
   validate?: Validator;
   dev?: boolean;
   omitCheckExp?: boolean;
