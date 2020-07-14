@@ -40,7 +40,7 @@ export type TokenPayload =
   | PasswordGrantTokenPayload;
 
 const HapiOidc: Plugin<HapiOidcOptions> = {
-  name: "synapse-oidc",
+  name: "hapi-oidc",
   register: async (server, options) => {
     assert(
       options.fetchKeystore || options.dev,
