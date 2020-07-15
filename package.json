@@ -8,7 +8,9 @@
     "build": "yarn clean && tsc --project ./tsconfig.build.json",
     "clean": "rimraf dist",
     "test": "TSCONFIG=./tsconfig.test.json lab --sourcemaps --transform node_modules/lab-transform-typescript",
-    "test:watch": "nodemon -e ts -x lab --sourcemaps --transform node_modules/lab-transform-typescript"
+    "test:watch": "nodemon -e ts -x lab --sourcemaps --transform node_modules/lab-transform-typescript",
+    "lint": "eslint",
+    "lint:all": "eslint ."
   },
   "license": "MIT",
   "private": true,
@@ -21,19 +23,22 @@
     "@types/node": "^14.0.13",
     "@types/node-jose": "^1.1.4",
     "@types/sinon": "^9.0.4",
+    "eslint": "^7.4.0",
     "lab-transform-typescript": "^3.0.1",
     "nock": "^13.0.2",
     "nodemon": "^2.0.4",
     "prettier": "2.0.5",
     "rimraf": "^3.0.2",
     "sinon": "^9.0.2",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "@types/btoa": "^1.2.3",
+    "@types/hapi__wreck": "^17.0.1"
   },
   "dependencies": {
     "@hapi/hoek": "^9.0.4",
     "@hapi/wreck": "^17.0.0",
-    "@types/btoa": "^1.2.3",
-    "@types/hapi__wreck": "^17.0.1",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "date-fns": "^2.14.0",
