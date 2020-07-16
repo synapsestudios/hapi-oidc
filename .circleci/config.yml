@@ -22,8 +22,12 @@ jobs:
 
       - run:
           name: Run Linter
-          command: yarn run lint -- --format junit -o reports/eslint/results.xml
+          command: yarn run lint:ci
           working_directory: api
+
+      - store_test_results:
+          path: reports
+          when: always
 
 
       - save_cache:
