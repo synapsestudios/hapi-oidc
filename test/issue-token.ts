@@ -8,6 +8,17 @@ export { lab };
 
 import { createInitializedServer } from "./util/server";
 import plugin from "../lib";
+import { ClientRequest } from "http";
+
+/**
+ * Nock is already hacking together a request type that is
+ * missing data from node's ClientRequest type, and I need to hack
+ * in the status message on the response to make linters stop yelling at me
+ */
+type NockRequest = ClientRequest & {
+  headers: Record<string, string>;
+  response: { statusMessage: string };
+};
 
 type ScopeGeneratorOptions = { tokenEndpoint: string };
 const passwordGrantNockScope = ({ tokenEndpoint }: ScopeGeneratorOptions) => {
@@ -30,8 +41,8 @@ const badPasswordGrantNockScope = ({
   return nock(tokenEndpointUrl.origin)
     .post(tokenEndpointUrl.pathname)
     .reply(400, function () {
-      // @ts-ignore bad types in nock
-      this.req.response.statusMessage = "Bad Request";
+      const request = this.req as NockRequest;
+      request.response.statusMessage = "Bad Request";
       return {
         error: "invalid_grant",
         error_description: "invalid credentials provided",
@@ -44,8 +55,8 @@ const badGrantNockScope = ({ tokenEndpoint }: ScopeGeneratorOptions) => {
   return nock(tokenEndpointUrl.origin)
     .post(tokenEndpointUrl.pathname)
     .reply(400, function () {
-      // @ts-ignore bad types in nock
-      this.req.response.statusMessage = "Bad Request";
+      const request = this.req as NockRequest;
+      request.response.statusMessage = "Bad Request";
       return {
         error: "unsupported_grant_type",
         error_description: "unsupported grant_type requested (FAKE GRANT)",

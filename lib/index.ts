@@ -34,7 +34,7 @@ type HapiOidcOptions = {
 
 const logger = (server: Server) => (
   tags: string | Array<string>,
-  message?: object | string,
+  message?: Record<string, unknown> | string,
   timestamp?: number
 ) => server.log(tags, message, timestamp);
 

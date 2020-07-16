@@ -46,16 +46,22 @@ export type DecodedJWTPayload = {
   jti?: string;
 };
 
+export type DecodedJWTHeader = {
+  typ: string;
+  alg: string;
+  kid: string;
+};
+
 type ValidationObject = {
   isValid: boolean;
-  credentials?: any;
+  credentials?: unknown;
 };
 export type ValidationResult = ValidationObject | Promise<ValidationObject>;
 export type Validator = (d: DecodedJWTPayload) => ValidationResult;
 
 type Log = (
   tags: string | Array<string>,
-  message?: any,
+  message?: unknown,
   timestamp?: number
 ) => void;
 
@@ -77,7 +83,7 @@ const checkValidationResultType = (returnValue: ValidationResult) => {
 };
 
 // copied type from the node-jose package
-type SerializedKeystore = object | string;
+type SerializedKeystore = Record<string, unknown> | string;
 
 const verify = (
   log: Log,
@@ -87,7 +93,8 @@ const verify = (
 ) => async (decoded: DecodedJWTPayload, request: RequestWithToken) => {
   const keystore = await jose.JWK.asKeyStore(keystoreSerialized);
   const token = request.auth.token;
-  const header = JSON.parse(atob(token.split(".")[0]));
+  const header = JSON.parse(atob(token.split(".")[0])) as DecodedJWTHeader;
+
   const key = keystore.get(header.kid);
 
   try {
