@@ -33,7 +33,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -58,7 +58,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -75,7 +75,7 @@ describe("Integration", () => {
           plugin,
           options: {},
         });
-      await expect(rejects()).to.reject();
+      expect(rejects()).to.reject();
       await server.stop();
     });
 
@@ -103,7 +103,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -124,7 +124,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -142,7 +142,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -166,7 +166,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -189,7 +189,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -214,7 +214,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
@@ -225,6 +225,7 @@ describe("Integration", () => {
     it("Returns a 500 when the custom validator returns an unexpected type", async () => {
       const server = await createInitializedServer();
       await server.register({
+        // eslint-disable-next-line  @typescript-eslint/ban-ts-comment
         // @ts-ignore: i'm passing the wrong type on purpose
         plugin,
         options: {
@@ -238,7 +239,7 @@ describe("Integration", () => {
       const response = await server.inject({
         method: "GET",
         url: "/auth-check",
-        headers: { Authorization: `Bearer ${token} ` },
+        headers: { Authorization: `Bearer ${token.toString()} ` },
       });
 
       await server.stop();
