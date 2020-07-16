@@ -10,7 +10,8 @@
     "test": "TSCONFIG=./tsconfig.test.json lab --sourcemaps --transform node_modules/lab-transform-typescript",
     "test:watch": "nodemon -e ts -x lab --sourcemaps --transform node_modules/lab-transform-typescript",
     "lint": "eslint",
-    "lint:all": "eslint ."
+    "lint:all": "eslint .",
+    "lint:ci": "eslint . --format junit -o reports/eslint/results.xml"
   },
   "license": "MIT",
   "private": true,
