@@ -1,5 +1,5 @@
 {
-  "name": "hapi-oidc-plugin",
+  "name": "@synapsestudios/hapi-oidc-plugin",
   "version": "2.0.0-rc1",
   "description": "Plugin to add endpoints and expose a service for interacting with the synapse oidc based identity platform",
   "main": "dist/index.js",
