@@ -1,4 +1,5 @@
 # Synapse Studios hapi-oidc
+[![CircleCI](https://circleci.com/gh/synapsestudios/hapi-oidc/tree/master.svg?style=svg)](https://circleci.com/gh/synapsestudios/hapi-oidc/tree/master)
 
 This plugin shortcuts some of the integration with the [Synapse OIDC Service](https://github.com/synapsestudios/oidc-platform). It registers the [hapi-auth-jwt2](https://github.com/dwyl/hapi-auth-jwt2/issues) plugin on the server and configures authentication strategies to use in your routes.
 

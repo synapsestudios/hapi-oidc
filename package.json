@@ -4,6 +4,14 @@
   "description": "Plugin to add endpoints and expose a service for interacting with the synapse oidc based identity platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synapsestudios/hapi-oidc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/synapsestudios/hapi-oidc/issues"
+  },
+  "homepage": "https://github.com/synapsestudios/hapi-oidc#readme",
   "engines": {
     "node": ">=12.0.0 <=~14"
   },
