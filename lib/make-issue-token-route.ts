@@ -1,4 +1,9 @@
-import { ResponseToolkit, Request, ResponseObject } from "@hapi/hapi";
+import {
+  ResponseToolkit,
+  Request,
+  ResponseObject,
+  ServerRoute,
+} from "@hapi/hapi";
 import { Boom, Payload, Output } from "@hapi/boom";
 import querystring from "querystring";
 import Wreck from "@hapi/wreck";
@@ -11,7 +16,7 @@ type OidcErrorPayload = Payload & { oidc_error: Record<string, unknown> };
 type OidcErrorOutput = Output & { payload: OidcErrorPayload };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type HapiResponse = ResponseObject | Required<Boom<any>>;
+type HapiResponse = ResponseObject | Boom<any>;
 function isOidcError(response: HapiResponse): response is OidcError {
   return (response as OidcError).isBoom !== undefined;
 }
@@ -34,9 +39,10 @@ const token = (clients: ClientSecrets, tokenEndpoint: string) => async (
   return await Wreck.post(tokenEndpoint, options);
 };
 
-type RequestWithOidcError = Request & { response: HapiResponse };
-
-const makeIssueTokenRoute = (clients: ClientSecrets, tokenEndpoint: string) => {
+const makeIssueTokenRoute = (
+  clients: ClientSecrets,
+  tokenEndpoint: string
+): ServerRoute => {
   const issueToken = token(clients, tokenEndpoint);
   return {
     path: "/token",
@@ -49,7 +55,7 @@ const makeIssueTokenRoute = (clients: ClientSecrets, tokenEndpoint: string) => {
     options: {
       ext: {
         onPreResponse: {
-          method: (request: RequestWithOidcError, h: ResponseToolkit) => {
+          method: (request: Request, h: ResponseToolkit) => {
             const { response } = request;
             if (isOidcError(response)) {
               response.output.payload.oidc_error = JSON.parse(

@@ -61,7 +61,7 @@ export type Validator = (d: DecodedJWTPayload) => ValidationResult;
 
 type Log = (
   tags: string | Array<string>,
-  message?: unknown,
+  message?: Record<string, unknown> | string,
   timestamp?: number
 ) => void;
 
