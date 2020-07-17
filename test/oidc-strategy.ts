@@ -1,7 +1,6 @@
 import * as Lab from "@hapi/lab";
 import { expect } from "@hapi/code";
 import { stub } from "sinon";
-import { Server } from "@hapi/hapi";
 
 import keystores from "./util/keystores.json";
 import { createInitializedServer } from "./util/server";
@@ -14,20 +13,19 @@ export { lab };
 
 const getToken = getTokenWithoutKs();
 
-const addAuthCheckRoute = (server: Server) =>
-  server.route({
-    method: "GET",
-    path: "/auth-check",
-    handler: () => ({ message: "success" }),
-    options: { auth: "oidc" },
-  });
+const getAuthCheckRoute = () => ({
+  method: "GET",
+  path: "/auth-check",
+  handler: () => ({ message: "success" }),
+  options: { auth: "oidc" },
+});
 
 describe("Integration", () => {
   describe("oidc strategy", () => {
     it("Can be used in a route", async () => {
       const server = await createInitializedServer();
       await server.register({ plugin, options: { dev: true } });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken();
       const response = await server.inject({
@@ -52,7 +50,7 @@ describe("Integration", () => {
         },
       });
 
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getTokenWithoutKs(keystores)();
       const response = await server.inject({
@@ -82,7 +80,7 @@ describe("Integration", () => {
     it("Returns a 401 when no authorization header is provided", async () => {
       const server = await createInitializedServer();
       await server.register({ plugin, options: { dev: true } });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const response = await server.inject({
         method: "GET",
@@ -97,7 +95,7 @@ describe("Integration", () => {
     it("Returns a 200 when the token contains an expiration date", async () => {
       const server = await createInitializedServer();
       await server.register({ plugin, options: { dev: true } });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken({ exp: Date.now() + 10000 });
       const response = await server.inject({
@@ -118,7 +116,7 @@ describe("Integration", () => {
         plugin,
         options: { dev: true, omitCheckExp: true },
       });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken({ exp: Date.now() - 10000 });
       const response = await server.inject({
@@ -136,7 +134,7 @@ describe("Integration", () => {
     it("Returns a 401 when token is expired", async () => {
       const server = await createInitializedServer();
       await server.register({ plugin, options: { dev: true } });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken({ exp: Date.now() - 10000 });
       const response = await server.inject({
@@ -159,7 +157,7 @@ describe("Integration", () => {
         },
       });
 
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       // Get a token signed with an inompatible key
       const token = await getTokenWithoutKs(keystores)();
@@ -183,7 +181,7 @@ describe("Integration", () => {
           validate: () => ({ isValid: false }),
         },
       });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken();
       const response = await server.inject({
@@ -208,7 +206,7 @@ describe("Integration", () => {
           },
         },
       });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken();
       const response = await server.inject({
@@ -233,7 +231,7 @@ describe("Integration", () => {
           validate: () => true,
         },
       });
-      addAuthCheckRoute(server);
+      server.route(getAuthCheckRoute());
 
       const token = await getToken();
       const response = await server.inject({
@@ -245,6 +243,77 @@ describe("Integration", () => {
       await server.stop();
 
       expect(response.statusCode).to.equal(500);
+    });
+
+    it("can be configured with a custom strategy", async () => {
+      const server = await createInitializedServer();
+      await server.register({
+        plugin,
+        options: {
+          dev: true,
+          strategy: {
+            name: "custom",
+            validate: (decodedToken) => ({
+              isValid: true,
+              credentials: decodedToken,
+            }),
+          },
+        },
+      });
+
+      server.route({ ...getAuthCheckRoute(), options: { auth: "custom" } });
+
+      const token = await getToken();
+      const response = await server.inject({
+        method: "GET",
+        url: "/auth-check",
+        headers: { Authorization: `Bearer ${token.toString()} ` },
+      });
+
+      await server.stop();
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.result).to.equal({ message: "success" });
+    });
+
+    it("can be configured with multiple custom strategies", async () => {
+      const server = await createInitializedServer();
+      await server.register({
+        plugin,
+        options: {
+          dev: true,
+          strategy: [
+            {
+              name: "custom",
+              validate: (decodedToken) => ({
+                isValid: true,
+                credentials: decodedToken,
+              }),
+            },
+            {
+              name: "custom2",
+              validate: (decodedToken) => ({
+                isValid: true,
+                credentials: decodedToken,
+              }),
+            },
+          ],
+        },
+      });
+
+      server.route({ ...getAuthCheckRoute(), options: { auth: "custom" } });
+
+      const token = await getToken();
+      const response = await server.inject({
+        method: "GET",
+        url: "/auth-check",
+        headers: { Authorization: `Bearer ${token.toString()} ` },
+      });
+
+      await server.stop();
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.result).to.equal({ message: "success" });
     });
   });
 });
