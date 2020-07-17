@@ -32,6 +32,10 @@ jobs:
           name: Build (checks .ts types)
           command: yarn build
 
+      - run:
+          name: Check Code Formatting
+          command: yarn prettier:ci
+
       - store_test_results:
           path: reports
           when: always

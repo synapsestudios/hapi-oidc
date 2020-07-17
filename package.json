@@ -12,7 +12,8 @@
     "test:ci": "lab -l -r junit -o reports/lab/results.xml --sourcemaps --transform node_modules/lab-transform-typescript",
     "lint": "eslint",
     "lint:all": "eslint .",
-    "lint:ci": "eslint . --format junit -o reports/eslint/results.xml"
+    "lint:ci": "eslint . --format junit -o reports/eslint/results.xml",
+    "prettier:ci": "prettier --check **/*.{ts,js}"
   },
   "license": "MIT",
   "private": true,
