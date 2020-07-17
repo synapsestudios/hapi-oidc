@@ -5,9 +5,9 @@
 version: 2.1
 jobs:
 
-  test:
+  test-node12:
     docker:
-      - image: circleci/node:12.16.3
+      - image: circleci/node:12
     steps:
       - checkout
 
@@ -49,8 +49,54 @@ jobs:
           paths:
             - ~/.cache/yarn
 
+  test-node14:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Workspace Dependencies
+          command: yarn install --frozen-lockfile
+
+      - run:
+          name: Build (checks .ts types)
+          command: yarn build
+          when: always
+
+      - run:
+          name: Run Linter
+          command: yarn run lint:ci
+          when: always
+
+      - run:
+          name: Run Tests
+          command: yarn test:ci
+          when: always
+
+      - run:
+          name: Check Code Formatting
+          command: yarn prettier:ci
+          when: always
+
+      - store_test_results:
+          path: reports
+          when: always
+
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+
 workflows:
   version: 2.1
   unit_test:
     jobs:
-      - test
+      - test-node12
+      - test-node14
