@@ -23,6 +23,12 @@ type Key = {
  */
 type Keystore = { keys: Key[] };
 
+type StrategyConfiguration = {
+  name: string;
+  validate?: Validator;
+};
+type StrategyConfigurationCollection = Array<StrategyConfiguration>;
+
 type HapiOidcOptions = {
   tokenEndpoint?: string;
   clients?: ClientSecrets;
@@ -30,6 +36,7 @@ type HapiOidcOptions = {
   validate?: Validator;
   dev?: boolean;
   omitCheckExp?: boolean;
+  strategy?: StrategyConfiguration | StrategyConfigurationCollection;
 };
 
 const logger = (server: Server) => (
@@ -53,6 +60,12 @@ export type TokenPayload =
   | AuthorizationGrantTokenPayload
   | PasswordGrantTokenPayload;
 
+function isStrategyConfigurationCollection(
+  strategy: StrategyConfiguration | StrategyConfigurationCollection
+): strategy is StrategyConfigurationCollection {
+  return !!(strategy as StrategyConfigurationCollection).length;
+}
+
 const HapiOidc: Plugin<HapiOidcOptions> = {
   name: "hapi-oidc",
   register: async (server, options) => {
@@ -66,14 +79,39 @@ const HapiOidc: Plugin<HapiOidcOptions> = {
       : keystoresFromFile;
 
     await server.register(HapiAuthJwt, { once: true });
-    server.auth.strategy("oidc", "jwt", {
-      verify: verifyJWT(
-        logger(server),
-        keystores,
-        options.validate,
-        options.omitCheckExp
-      ),
-    });
+
+    if (options.strategy) {
+      if (isStrategyConfigurationCollection(options.strategy)) {
+        options.strategy.forEach((strategy) =>
+          server.auth.strategy(strategy.name, "jwt", {
+            verify: verifyJWT(
+              logger(server),
+              keystores,
+              strategy.validate,
+              options.omitCheckExp
+            ),
+          })
+        );
+      } else {
+        server.auth.strategy(options.strategy.name, "jwt", {
+          verify: verifyJWT(
+            logger(server),
+            keystores,
+            options.strategy.validate,
+            options.omitCheckExp
+          ),
+        });
+      }
+    } else {
+      server.auth.strategy("oidc", "jwt", {
+        verify: verifyJWT(
+          logger(server),
+          keystores,
+          options.validate,
+          options.omitCheckExp
+        ),
+      });
+    }
 
     if (options.tokenEndpoint && options.clients) {
       server.route(makeIssueTokenRoute(options.clients, options.tokenEndpoint));

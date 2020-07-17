@@ -54,7 +54,7 @@ export type DecodedJWTHeader = {
 
 type ValidationObject = {
   isValid: boolean;
-  credentials?: unknown;
+  credentials: unknown;
 };
 export type ValidationResult = ValidationObject | Promise<ValidationObject>;
 export type Validator = (d: DecodedJWTPayload) => ValidationResult;
