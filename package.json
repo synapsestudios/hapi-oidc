@@ -17,7 +17,7 @@
     "lint:all": "eslint .",
     "lint:ci": "eslint . --format junit -o reports/eslint/results.xml",
     "prettier:ci": "prettier --check **/*.{ts,js}",
-    "prepublish": "yarn build"
+    "prepublish": "yarn test && yarn build"
   },
   "license": "MIT",
   "private": false,
