@@ -26,7 +26,7 @@ jobs:
 
       - run:
           name: Run Tests
-          command: yarn test
+          command: yarn test:ci
 
       - run:
           name: Build (checks .ts types)
