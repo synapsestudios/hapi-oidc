@@ -172,6 +172,30 @@ describe("Integration", () => {
       expect(response.statusCode).to.equal(401);
     });
 
+    it("Succeeds with a 200 when custom validation returns a promise", async () => {
+      const server = await createInitializedServer();
+      await server.register({
+        plugin,
+        options: {
+          dev: true,
+          validate: (token) =>
+            Promise.resolve({ isValid: true, credentials: token }),
+        },
+      });
+      server.route(getAuthCheckRoute());
+
+      const token = await getToken();
+      const response = await server.inject({
+        method: "GET",
+        url: "/auth-check",
+        headers: { Authorization: `Bearer ${token.toString()} ` },
+      });
+
+      await server.stop();
+
+      expect(response.statusCode).to.equal(200);
+    });
+
     it("Returns a 401 when custom validate function returns isValid as false", async () => {
       const server = await createInitializedServer();
       await server.register({

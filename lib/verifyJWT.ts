@@ -111,7 +111,8 @@ const verify = (
     }
   }
 
-  return checkValidationResultType(validate(decoded));
+  const validationResult = await validate(decoded);
+  return checkValidationResultType(validationResult);
 };
 
 export default verify;
