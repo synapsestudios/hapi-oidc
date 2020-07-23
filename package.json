@@ -1,0 +1,66 @@
+{
+  "name": "@synapsestudios/hapi-oidc-plugin",
+  "version": "2.0.0",
+  "description": "Plugin to add endpoints and expose a service for interacting with the synapse oidc based identity platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synapsestudios/hapi-oidc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/synapsestudios/hapi-oidc/issues"
+  },
+  "homepage": "https://github.com/synapsestudios/hapi-oidc#readme",
+  "engines": {
+    "node": ">=12.0.0 <=~14"
+  },
+  "scripts": {
+    "build": "yarn clean && tsc --project ./tsconfig.build.json",
+    "clean": "rimraf dist",
+    "test": "TSCONFIG=./tsconfig.test.json lab --sourcemaps --transform node_modules/lab-transform-typescript",
+    "test:watch": "nodemon -e ts -x lab --sourcemaps --transform node_modules/lab-transform-typescript",
+    "test:ci": "lab -l -r junit -o reports/lab/results.xml --sourcemaps --transform node_modules/lab-transform-typescript",
+    "lint": "eslint",
+    "lint:all": "eslint .",
+    "lint:ci": "eslint . --format junit -o reports/eslint/results.xml",
+    "prettier:ci": "prettier --check **/*.{ts,js}",
+    "prepublish": "yarn test && yarn build"
+  },
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@hapi/code": "^8.0.1",
+    "@hapi/hapi": "^19.1.1",
+    "@hapi/lab": "^22.0.4",
+    "@types/atob": "^2.1.2",
+    "@types/hapi__hapi": "^19.0.3",
+    "@types/node": "^14.0.13",
+    "@types/node-jose": "^1.1.4",
+    "@types/sinon": "^9.0.4",
+    "eslint": "^7.4.0",
+    "lab-transform-typescript": "^3.0.1",
+    "nock": "^13.0.2",
+    "nodemon": "^2.0.4",
+    "prettier": "2.0.5",
+    "rimraf": "^3.0.2",
+    "sinon": "^9.0.2",
+    "typescript": "^3.9.5",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "@types/btoa": "^1.2.3",
+    "@types/hapi__wreck": "^17.0.1"
+  },
+  "dependencies": {
+    "@hapi/hoek": "^9.0.4",
+    "@hapi/wreck": "^17.0.0",
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
+    "date-fns": "^2.14.0",
+    "hapi-auth-jwt2": "^10.1.0",
+    "node-jose": "^1.1.4"
+  },
+  "peerDependencies": {
+    "@hapi/hapi": "~19"
+  }
+}
